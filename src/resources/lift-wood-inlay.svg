@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="inlayBase" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#5f2627"/>
+      <stop offset="0.5" stop-color="#7a3334"/>
+      <stop offset="1" stop-color="#542122"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#inlayBase)"/>
+  <g opacity="0.45">
+    <rect x="0" y="96" width="1024" height="8" fill="#8a4a4b"/>
+    <rect x="0" y="220" width="1024" height="6" fill="#421717"/>
+    <rect x="0" y="340" width="1024" height="7" fill="#8f4f50"/>
+    <rect x="0" y="466" width="1024" height="6" fill="#431818"/>
+    <rect x="0" y="590" width="1024" height="8" fill="#8a494a"/>
+    <rect x="0" y="714" width="1024" height="6" fill="#451919"/>
+    <rect x="0" y="838" width="1024" height="7" fill="#8d4d4e"/>
+  </g>
+  <g opacity="0.24">
+    <ellipse cx="180" cy="190" rx="76" ry="22" fill="#a45d5f"/>
+    <ellipse cx="180" cy="190" rx="42" ry="12" fill="#5b2122"/>
+    <ellipse cx="532" cy="462" rx="92" ry="26" fill="#a75f61"/>
+    <ellipse cx="532" cy="462" rx="52" ry="14" fill="#5e2224"/>
+    <ellipse cx="820" cy="760" rx="80" ry="24" fill="#a35d5f"/>
+    <ellipse cx="820" cy="760" rx="46" ry="13" fill="#582021"/>
+  </g>
+</svg>

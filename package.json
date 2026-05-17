@@ -1,0 +1,26 @@
+{
+  "name": "brittanic-ui",
+  "version": "1.0.0",
+  "description": "Britannic 3D department store experience built with Three.js and Vite",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "start": "npm run build && vite preview --host"
+  },
+  "keywords": [
+    "threejs",
+    "ux",
+    "spatial-ui"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^8.0.9"
+  }
+}

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#8f8f8f"/>
+
+  <defs>
+    <pattern id="grain" width="64" height="64" patternUnits="userSpaceOnUse">
+      <rect width="64" height="64" fill="#909090"/>
+      <path d="M0 8H64 M0 24H64 M0 40H64 M0 56H64" stroke="#818181" stroke-width="0.8" opacity="0.28"/>
+      <path d="M8 0V64 M24 0V64 M40 0V64 M56 0V64" stroke="#a9a9a9" stroke-width="0.7" opacity="0.22"/>
+      <circle cx="11" cy="13" r="1.2" fill="#6f6f6f" opacity="0.45"/>
+      <circle cx="23" cy="41" r="1.4" fill="#c0c0c0" opacity="0.42"/>
+      <circle cx="36" cy="18" r="1.1" fill="#6d6d6d" opacity="0.4"/>
+      <circle cx="49" cy="51" r="1.3" fill="#c4c4c4" opacity="0.44"/>
+      <circle cx="58" cy="29" r="1.0" fill="#6b6b6b" opacity="0.38"/>
+      <path d="M5 60L17 52M27 8L36 2M41 30L54 22" stroke="#767676" stroke-width="0.9" opacity="0.34"/>
+      <path d="M7 33L15 39M29 52L39 58M45 10L54 16" stroke="#bbbbbb" stroke-width="0.8" opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#grain)"/>
+
+  <g opacity="0.16">
+    <path d="M0 146C112 130 234 166 352 142C486 114 624 164 764 136C854 118 944 154 1024 138V196C940 208 852 172 764 190C618 220 482 168 352 198C234 224 112 184 0 206Z" fill="#6e6e6e"/>
+    <path d="M0 462C126 446 238 482 352 458C490 430 620 478 764 450C860 432 946 470 1024 452V506C946 520 858 486 764 504C620 530 488 484 352 512C240 536 124 498 0 520Z" fill="#707070"/>
+    <path d="M0 782C118 768 236 802 352 778C488 750 626 802 764 772C858 754 946 790 1024 774V828C946 842 858 808 764 824C624 850 486 804 352 832C236 854 118 820 0 844Z" fill="#6d6d6d"/>
+  </g>
+</svg>

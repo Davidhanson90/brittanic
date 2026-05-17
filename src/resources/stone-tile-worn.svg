@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#72665d"/>
+  <g opacity="0.95" fill="none" stroke="#5b5048" stroke-width="4">
+    <path d="M0 256H1024M0 512H1024M0 768H1024"/>
+    <path d="M256 0V1024M512 0V1024M768 0V1024"/>
+  </g>
+  <g opacity="0.2" fill="#908279">
+    <rect x="12" y="12" width="232" height="232"/>
+    <rect x="268" y="24" width="228" height="224"/>
+    <rect x="526" y="12" width="240" height="232"/>
+    <rect x="782" y="20" width="230" height="224"/>
+    <rect x="16" y="274" width="226" height="230"/>
+    <rect x="276" y="282" width="224" height="220"/>
+    <rect x="528" y="272" width="236" height="234"/>
+    <rect x="786" y="280" width="224" height="228"/>
+    <rect x="18" y="530" width="228" height="236"/>
+    <rect x="274" y="536" width="224" height="228"/>
+    <rect x="530" y="534" width="232" height="228"/>
+    <rect x="784" y="530" width="228" height="236"/>
+    <rect x="20" y="786" width="224" height="224"/>
+    <rect x="274" y="788" width="226" height="222"/>
+    <rect x="528" y="784" width="236" height="226"/>
+    <rect x="784" y="790" width="226" height="220"/>
+  </g>
+</svg>

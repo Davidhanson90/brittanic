@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Britannic | Spatial Department Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app" data-zone="entrance">
+      <canvas id="world" aria-label="Britannic spatial interface"></canvas>
+      <div class="bg-scrim" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <header class="brand-bar">
+        <p class="crest">Britannic</p>
+        <h1>House of Mayfair Commerce</h1>
+        <p class="status">Draft Spatial UX | White-Glove Journey</p>
+      </header>
+
+      <section class="zone-panel">
+        <p class="eyebrow" id="zone-eyebrow">Entrance</p>
+        <h2 id="zone-title">The Entrance Hall</h2>
+        <p id="zone-copy">
+          Step into a fully formed room. Look around the walls, up to the coffered ceiling, and click the
+          lift directly to begin your vertical journey.
+        </p>
+        <button id="primary-action" class="btn btn-primary" type="button">Approach Lift</button>
+
+        <div id="brightness-controls" class="brightness-controls">
+          <label for="room-brightness">Room Brightness</label>
+          <div class="brightness-row">
+            <input id="room-brightness" type="range" min="0.8" max="1.6" step="0.01" value="1.1" />
+            <span id="room-brightness-value">1.10x</span>
+          </div>
+        </div>
+      </section>
+
+      <nav class="flow-nav" aria-label="Zone navigation">
+        <button class="zone-chip active" data-scene="entrance" type="button">Entrance</button>
+        <button class="zone-chip" data-scene="lift" type="button">Lift</button>
+        <button class="zone-chip" data-scene="shop" type="button">Shop Front</button>
+      </nav>
+
+      <aside class="assistant-card">
+        <p class="assistant-label">Global Assistant</p>
+        <p class="assistant-quote" id="assistant-quote">
+          Good evening. I can guide you to any floor, or arrange a private wardrobe consultation.
+        </p>
+      </aside>
+
+      <button id="ai-toggle" class="ai-toggle-btn" type="button" aria-pressed="false" title="Enable AI assistant">
+        <span class="ai-toggle-icon" aria-hidden="true">*</span>
+        <span id="ai-toggle-label">AI Off</span>
+      </button>
+
+      <section id="level-selector" class="level-selector" hidden aria-label="Lift level selector">
+        <p class="selector-label">Lift Level Selector</p>
+        <p class="selector-display">Current Selection: <span id="selector-current-level">0</span></p>
+        <div id="level-grid" class="level-grid"></div>
+        <button id="go-lobby" class="btn btn-secondary selector-lobby" type="button">Lobby</button>
+      </section>
+
+      <div class="transition-mask" id="transition-mask" aria-hidden="true">
+        <p id="transition-label">Transitioning</p>
+      </div>
+
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

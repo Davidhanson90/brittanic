@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#5f1f2a"/>
+  <rect x="58" y="58" width="908" height="908" fill="none" stroke="#d0a66e" stroke-width="22"/>
+  <rect x="98" y="98" width="828" height="828" fill="none" stroke="#8f3e4a" stroke-width="12"/>
+  <g opacity="0.35" stroke="#c99a66" stroke-width="4" fill="none">
+    <path d="M176 176H848V848H176Z"/>
+    <path d="M224 224H800V800H224Z"/>
+    <path d="M272 272H752V752H272Z"/>
+  </g>
+  <g opacity="0.26" fill="#e0bd8d">
+    <circle cx="512" cy="512" r="108"/>
+    <circle cx="512" cy="512" r="42" fill="#7b2d37"/>
+    <circle cx="208" cy="208" r="24"/>
+    <circle cx="816" cy="208" r="24"/>
+    <circle cx="208" cy="816" r="24"/>
+    <circle cx="816" cy="816" r="24"/>
+  </g>
+  <g opacity="0.2" stroke="#3f1620" stroke-width="2">
+    <path d="M0 128H1024M0 256H1024M0 384H1024M0 512H1024M0 640H1024M0 768H1024M0 896H1024"/>
+    <path d="M128 0V1024M256 0V1024M384 0V1024M512 0V1024M640 0V1024M768 0V1024M896 0V1024"/>
+  </g>
+</svg>
