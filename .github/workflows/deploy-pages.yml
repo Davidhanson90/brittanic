@@ -40,20 +40,20 @@ jobs:
 
       - name: Verify built entrypoints
         run: |
-          if grep -q "src/main.ts" dist/index.html; then
-            echo "dist/index.html still references src/main.ts; aborting deploy"
+          if grep -q "src/main.ts" dist/browser/index.html; then
+            echo "dist/browser/index.html still references src/main.ts; aborting deploy"
             exit 1
           fi
-          if ! grep -Eq '<script[^>]+type="module"[^>]+src="\.?/assets/.+\.js"' dist/index.html; then
-            echo "dist/index.html does not reference a built assets JS bundle; aborting deploy"
+          if ! grep -Eq '<script[^>]+src="[^"]+\.js"[^>]+type="module"' dist/browser/index.html; then
+            echo "dist/browser/index.html does not reference a built assets JS bundle; aborting deploy"
             exit 1
           fi
 
       - name: Add SPA fallback
-        run: cp dist/index.html dist/404.html
+        run: cp dist/browser/index.html dist/browser/404.html
 
       - name: Disable Jekyll
-        run: touch dist/.nojekyll
+        run: touch dist/browser/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
@@ -61,7 +61,7 @@ jobs:
       - name: Upload UI artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./dist
+          path: ./dist/browser
 
   deploy:
     needs: build
