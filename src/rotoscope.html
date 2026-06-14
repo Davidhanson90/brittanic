@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            background: url('/public/images/brittanic-lobby.jpg') no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+        }
+        canvas { display: block; transform: translateX(40%); }
+        #sourceVideo { display: none; } /* Hide the original green screen video */
+    </style>
+</head>
+<body>
+
+    <video id="sourceVideo" width="1152" height="648" autoplay loop muted playsinline>
+        <source src="/public/video/assistant.mp4" type="video/mp4">
+    </video>
+
+    <canvas id="outputCanvas" width="1152" height="648"></canvas>
+
+    <script>
+        const video = document.getElementById('sourceVideo');
+        const canvas = document.getElementById('outputCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+        let isRendering = false;
+
+        function computeFrame() {
+            if (video.readyState < 2) {
+                requestAnimationFrame(computeFrame);
+                return;
+            }
+
+            // 1. Draw the current video frame to the canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 2. Get the pixel data
+            let frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let l = frame.data.length / 4;
+
+            for (let i = 0; i < l; i++) {
+                let r = frame.data[i * 4 + 0];
+                let g = frame.data[i * 4 + 1];
+                let b = frame.data[i * 4 + 2];
+
+                // 3. The "Keying" logic: If pixel is 'very green', make it transparent
+                // Adjust these thresholds based on the exact shade of green
+                if (g > 80 && g > r * 1.05 && g > b * 1.05 && (g - Math.max(r, b)) > 10) {
+                    frame.data[i * 4 + 3] = 0; // Set Alpha to 0
+                }
+            }
+
+            // 4. Put the modified pixels back on the canvas
+            ctx.putImageData(frame, 0, 0);
+            
+            // Request the next frame
+            requestAnimationFrame(computeFrame);
+        }
+
+        function startRenderingOnce() {
+            if (isRendering) return;
+            isRendering = true;
+            computeFrame();
+        }
+
+        video.addEventListener('play', startRenderingOnce);
+        video.addEventListener('loadeddata', () => {
+            if (!video.paused) {
+                startRenderingOnce();
+            }
+        });
+
+        // Try to start playback in case autoplay timing causes the play event to be missed.
+        video.play().then(startRenderingOnce).catch(() => {
+            // Browser autoplay policies may block this; 'play' listener still handles normal flow.
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<main class="experience-root">
+
+<app-three-scene
+class="scene-layer"
+[backgroundImageSrc]="sceneBackgroundSrc()"
+[transitionVideoSrc]="sceneTransitionVideoSrc()"
+[showCharacters]="sceneShowCharacters()"
+[characters]="sceneCharacters()"
+[selectedCharacterId]="selectedCharacter()"
+(transitionVideoEnded)="onVideoEnded()"
+(characterClicked)="onCharacterClicked($event)"
+>
+  @if (stage() === 'start') {
+  <button
+  type="button"
+  class="fullscreen-button scene-layer"
+  (click)="onStartImageClick()"
+  aria-label="Enter the lobby"
+  [disabled]="transitionStarted()"
+  [style.pointer-events]="selectedCharacter() ? 'none' : 'auto'"
+  ></button>
+
+  <nav class="start-nav" aria-label="Quick navigation">
+  	<button type="button" class="lobby-nav-item" (click)="jumpToScene('lobby')">Lobby</button>
+  	<button type="button" class="lobby-nav-item" (click)="jumpToScene('lift')">Lift</button>
+  	<button type="button" class="lobby-nav-item" (click)="jumpToScene('store-entrance')">Store</button>
+  </nav>
+  }
+
+  @if (isLobbyScene) {
+  <nav class="lobby-nav" aria-label="Lobby navigation">
+  <button type="button" class="lobby-nav-item" (click)="onLiftClick()">Lift</button>
+  </nav>
+  }
+
+  @if (isLiftScene) {
+  <nav class="lobby-nav" aria-label="Lift navigation">
+  <button type="button" class="lobby-nav-item" (click)="onEnterLiftClick()">Enter Lift</button>
+  </nav>
+  }
+
+  @if (sceneShowCharacters()) {
+  <div class="character-selector" role="toolbar" aria-label="Select character to edit">
+  <span class="character-selector-label">Edit character:</span>
+  @if (stage() === 'start') {
+  <button
+  type="button"
+  class="character-btn"
+  [class.character-btn--active]="selectedCharacter() === 'doorman-outside'"
+  (click)="selectedCharacter.set(selectedCharacter() === 'doorman-outside' ? null : 'doorman-outside')"
+  >Doorman</button>
+  <button
+  type="button"
+  class="character-btn"
+  [class.character-btn--active]="selectedCharacter() === 'lady-in-red'"
+  (click)="selectedCharacter.set(selectedCharacter() === 'lady-in-red' ? null : 'lady-in-red')"
+  >Lady in Red</button>
+  }
+  @if (stage() !== 'start') {
+  <button
+  type="button"
+  class="character-btn"
+  [class.character-btn--active]="selectedCharacter() === 'security-guard-lobby'"
+  (click)="selectedCharacter.set(selectedCharacter() === 'security-guard-lobby' ? null : 'security-guard-lobby')"
+  >Security Guard</button>
+  <button
+  type="button"
+  class="character-btn"
+  [class.character-btn--active]="selectedCharacter() === 'old-ladies-lobby'"
+  (click)="selectedCharacter.set(selectedCharacter() === 'old-ladies-lobby' ? null : 'old-ladies-lobby')"
+  >Old Ladies</button>
+  <button
+  type="button"
+  class="character-btn"
+  [class.character-btn--active]="selectedCharacter() === 'jewelry-guy-lobby'"
+  (click)="selectedCharacter.set(selectedCharacter() === 'jewelry-guy-lobby' ? null : 'jewelry-guy-lobby')"
+  >Jewelry Guy</button>
+  }
+  @if (selectedCharacter()) {
+  <span class="character-selector-hint">Drag to move · scroll to resize</span>
+  }
+  </div>
+  }
+
+  @if (selectedCharacter()) {
+  <div class="char-controls">
+    <label class="char-control-row">
+      <span class="char-control-label">Brightness</span>
+      <input type="range" min="0.2" max="3" step="0.05"
+        [value]="editBrightness()"
+        (input)="editBrightness.set(+$any($event.target).value)" />
+      <span class="char-control-value">{{ editBrightness().toFixed(2) }}</span>
+    </label>
+    <label class="char-control-row">
+      <span class="char-control-label">Width</span>
+      <input type="range" min="0.05" max="2" step="0.005"
+        [value]="editWidthScale()"
+        (input)="editWidthScale.set(+$any($event.target).value)" />
+      <span class="char-control-value">{{ editWidthScale().toFixed(3) }}</span>
+    </label>
+    <label class="char-control-row">
+      <span class="char-control-label">Height</span>
+      <input type="range" min="0.02" max="1.5" step="0.005"
+        [value]="editScale()"
+        (input)="editScale.set(+$any($event.target).value)" />
+      <span class="char-control-value">{{ editScale().toFixed(3) }}</span>
+    </label>
+    <button type="button" class="char-copy-btn" (click)="copyEditConfig()">Copy config</button>
+  </div>
+  }
+</app-three-scene>
+
+@if (cinematicVideoActive()) {
+<div class="cinematic-box">
+  <video
+    #cinematicVideo
+    [src]="cinematicVideoSrc()"
+    autoplay
+    muted
+    playsInline
+    (ended)="onCinematicVideoEnded()"
+  ></video>
+</div>
+}
+
+</main>

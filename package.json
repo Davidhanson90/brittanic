@@ -1,26 +1,33 @@
 {
-  "name": "brittanic-ui",
-  "version": "1.0.0",
-  "description": "Britannic 3D department store experience built with Three.js and Vite",
+  "name": "brittanic-2",
+  "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "typecheck": "tsc --noEmit",
-    "build": "vite build",
-    "start": "npm run build && vite preview --host"
+    "ng": "ng",
+    "start": "ng serve",
+    "rotoscope": "npx http-server . -p 4173 -o /src/rotoscope.html",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
   },
-  "keywords": [
-    "threejs",
-    "ux",
-    "spatial-ui"
-  ],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
+  "private": true,
+  "packageManager": "npm@10.9.2",
   "dependencies": {
-    "three": "^0.184.0"
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@types/three": "^0.184.1",
+    "rxjs": "~7.8.0",
+    "three": "^0.184.0",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^8.0.9"
+    "@angular/build": "^21.2.12",
+    "@angular/cli": "^21.2.12",
+    "@angular/compiler-cli": "^21.2.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
   }
 }
