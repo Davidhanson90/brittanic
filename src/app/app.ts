@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
-import { ThreeSceneComponent, ThreeCharacterConfig } from './three-scene.component';
+import { ThreeSceneComponent } from './three-scene.component';
+import { Character, Doorman, JewelryGuy, LadyInRed, OldLadies, SecurityGuard } from './characters';
 
 type SceneStage = 'start' | 'transition-video' | 'end';
 type SceneId = 'outside' | 'lobby' | 'lift' | 'store-entrance';
@@ -36,71 +37,20 @@ export class App {
 
   protected readonly activeScene = this.scenes[0];
 
-  protected readonly outsideCharacters: ThreeCharacterConfig[] = [
-    {
-      id: 'doorman-outside',
-      videoSrc: 'video/doorman.mp4',
-      videoWidth: 1152,
-      videoHeight: 648,
-      offsetXPercent: 6.29,
-      offsetBottomPercent: 29.07,
-      scale: 0.135,
-      widthScale: 0.325,
-      brightness: 0.8,
-      key: { minGreen: 80, greenDominance: 1.05, minChannelGap: 10 },
-    },
-    {
-      id: 'lady-in-red',
-      videoSrc: 'video/lady-in-red.mp4',
-      videoWidth: 1152,
-      videoHeight: 648,
-      offsetXPercent: -30.89,
-      offsetBottomPercent: 18.34,
-      scale: 0.18,
-      widthScale: 0.3,
-      brightness: 0.75,
-      key: { minGreen: 80, greenDominance: 1.05, minChannelGap: 10 },
-    },
+  protected readonly outsideCharacters: Character[] = [
+    new Doorman(),
+    new LadyInRed(),
   ];
 
-  protected readonly lobbyCharacters: ThreeCharacterConfig[] = [
-    {
-      id: 'security-guard-lobby',
-      videoSrc: 'video/security-guard.mp4',
-      videoWidth: 1152,
-      videoHeight: 648,
-      offsetXPercent: -46.84,
-      offsetBottomPercent: 5.83,
-      scale: 0.558,
-      widthScale: 0.29,
-      brightness: 0.9,
-      key: { minGreen: 70, greenDominance: 1.02, minChannelGap: 5 },
-    },
-    {
-      id: 'old-ladies-lobby',
-      videoSrc: 'video/old-ladies.mp4',
-      videoWidth: 1152,
-      videoHeight: 648,
-      offsetXPercent: -9.78,
-      offsetBottomPercent: 24.5,
-      scale: 0.259,
-      widthScale: 0.5,
-      brightness: 0.85,
-      key: { minGreen: 80, greenDominance: 1.05, minChannelGap: 10 },
-    },
-    {
-      id: 'jewelry-guy-lobby',
-      videoSrc: 'video/jewlery-guy.mp4',
-      videoWidth: 1152,
-      videoHeight: 648,
-      offsetXPercent: 69.43,
-      offsetBottomPercent: 34.43,
-      scale: 0.14,
-      widthScale: 0.6,
-      brightness: 1.0,
-      key: { minGreen: 80, greenDominance: 1.05, minChannelGap: 10 },
-    },
+  protected readonly lobbyCharacters: Character[] = [
+    new SecurityGuard(),
+    new OldLadies(),
+    new JewelryGuy(),
   ];
+
+  private get allCharacters(): Character[] {
+    return [...this.outsideCharacters, ...this.lobbyCharacters];
+  }
   protected readonly stage = signal<SceneStage>('start');
   protected readonly currentSceneId = signal<SceneId>('outside');
   protected readonly selectedCharacter = signal<string | null>(null);
@@ -118,12 +68,11 @@ export class App {
     effect(() => {
       const id = this.selectedCharacter();
       if (!id) return;
-      const all = [...this.outsideCharacters, ...this.lobbyCharacters];
-      const c = all.find(ch => ch.id === id);
+      const c = this.allCharacters.find(ch => ch.id === id);
       if (c) {
-        this.editBrightness.set(c.brightness ?? 1.0);
-        this.editWidthScale.set(c.widthScale ?? 1.0);
-        this.editScale.set(c.scale);
+        this.editBrightness.set(c.config.brightness ?? 1.0);
+        this.editWidthScale.set(c.config.widthScale ?? 1.0);
+        this.editScale.set(c.config.scale);
       }
     });
   }
@@ -153,13 +102,13 @@ export class App {
 
   protected readonly sceneCharacters = computed(() => {
     const id = this.selectedCharacter();
-    const applyEdits = (chars: ThreeCharacterConfig[]) =>
+    const applyEdits = (chars: Character[]) =>
       chars.map(c => c.id === id ? {
-        ...c,
+        ...c.config,
         brightness: this.editBrightness(),
         widthScale: this.editWidthScale(),
         scale: this.editScale(),
-      } : c);
+      } : c.config);
     if (this.stage() === 'start') return applyEdits(this.outsideCharacters);
     if (this.currentSceneId() === 'lobby') return applyEdits(this.lobbyCharacters);
     return [];
@@ -168,13 +117,12 @@ export class App {
   protected copyEditConfig(): void {
     const id = this.selectedCharacter();
     if (!id) return;
-    const all = [...this.outsideCharacters, ...this.lobbyCharacters];
-    const base = all.find(c => c.id === id);
+    const base = this.allCharacters.find(c => c.id === id);
     if (!base) return;
     const payload = {
       id,
-      offsetXPercent: base.offsetXPercent,
-      offsetBottomPercent: base.offsetBottomPercent,
+      offsetXPercent: base.config.offsetXPercent,
+      offsetBottomPercent: base.config.offsetBottomPercent,
       scale: Number(this.editScale().toFixed(3)),
       widthScale: Number(this.editWidthScale().toFixed(3)),
       brightness: Number(this.editBrightness().toFixed(2)),
@@ -183,19 +131,25 @@ export class App {
   }
 
   protected onCharacterClicked(id: string): void {
-    if (id !== 'security-guard-lobby') return;
-    this.cinematicVideoSrc.set('video/security/the-best-deals.mp4');
+    const character = this.allCharacters.find(c => c.id === id);
+    if (!character?.cinematicVideoSrc) return;
+    character.clicked.next(id);
+    this.cinematicVideoSrc.set(character.cinematicVideoSrc);
     this.cinematicVideoActive.set(true);
   }
 
   protected onCinematicVideoEnded(): void {
     this.cinematicVideoActive.set(false);
+    const src = this.cinematicVideoSrc();
     this.cinematicVideoSrc.set('');
-    this.transitionStarted.set(true);
-    this.currentStillImagePath.set('images/brittanic-lobby.jpg');
-    this.currentStillImageAlt.set('Brittanic lobby');
-    this.currentSceneId.set('lobby');
-    this.stage.set('end');
+    const character = this.allCharacters.find(c => c.cinematicVideoSrc === src);
+    if (character?.triggersSceneTransition) {
+      this.transitionStarted.set(true);
+      this.currentStillImagePath.set('images/brittanic-lobby.jpg');
+      this.currentStillImageAlt.set('Brittanic lobby');
+      this.currentSceneId.set('lobby');
+      this.stage.set('end');
+    }
   }
 
   protected onStartImageClick(): void {
