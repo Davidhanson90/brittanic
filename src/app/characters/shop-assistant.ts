@@ -4,7 +4,7 @@ import type { ThreeCharacterConfig } from '../three-scene.component';
 export class ShopAssistant extends Character {
   override readonly id = 'shop-assistant';
   override readonly label = 'Shop Assistant';
-  override readonly cinematicVideoSrc = 'video/lady-assistant/lady-assistant-add-clothes.mp4';
+  override readonly cinematicVideoSrc = 'video/lady-assistant/welcome-to-prada.mp4';
 
   override readonly config: ThreeCharacterConfig = {
     id: this.id,
