@@ -47,15 +47,24 @@ class="scene-layer"
 
   @if (isLiftInsideScene) {
   <nav class="lobby-nav" aria-label="Lift floor navigation">
-  <input
-    type="number"
-    class="lift-floor-input"
-    placeholder="Floor"
-    [value]="liftFloorInput()"
-    (input)="liftFloorInput.set($any($event.target).value)"
-  />
-  <button type="button" class="lobby-nav-item" (click)="onLiftFloorGo()">Go</button>
+    <button type="button" class="lobby-nav-item" (click)="toggleFloorPanel()">Floors</button>
   </nav>
+  @if (showFloorPanel()) {
+  <div class="floor-panel-overlay" (click)="closeFloorPanel()">
+    <div class="floor-panel" (click)="$event.stopPropagation()">
+      <h2 class="floor-panel-title">Select a Floor</h2>
+      <div class="floor-grid">
+        @for (floor of floors; track floor.number) {
+        <button type="button" class="floor-btn" (click)="onFloorSelect(floor.number)">
+          <span class="floor-number">{{ floor.number }}</span>
+          <span class="floor-logo">{{ floor.logo }}</span>
+          <span class="floor-shop">{{ floor.shop }}</span>
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+  }
   }
 
   @if (isStoreScene) {
@@ -82,6 +91,7 @@ class="scene-layer"
   >Lady in Red</button>
   }
   @if (stage() !== 'start') {
+  @if (isLobbyScene) {
   <button
   type="button"
   class="character-btn"
@@ -100,6 +110,15 @@ class="scene-layer"
   [class.character-btn--active]="selectedCharacter() === 'jewelry-guy-lobby'"
   (click)="selectedCharacter.set(selectedCharacter() === 'jewelry-guy-lobby' ? null : 'jewelry-guy-lobby')"
   >Jewelry Guy</button>
+  }
+  @if (isStoreScene) {
+  <button
+  type="button"
+  class="character-btn"
+  [class.character-btn--active]="selectedCharacter() === 'shop-assistant'"
+  (click)="selectedCharacter.set(selectedCharacter() === 'shop-assistant' ? null : 'shop-assistant')"
+  >Shop Assistant</button>
+  }
   }
   @if (selectedCharacter()) {
   <span class="character-selector-hint">Drag to move · scroll to resize</span>

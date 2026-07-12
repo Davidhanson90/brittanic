@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { ThreeSceneComponent } from './three-scene.component';
-import { Character, Doorman, JewelryGuy, LadyInRed, OldLadies, SecurityGuard } from './characters';
+import { Character, Doorman, JewelryGuy, LadyInRed, OldLadies, SecurityGuard, ShopAssistant } from './characters';
 
 type SceneStage = 'start' | 'transition-video' | 'end';
 type SceneId = 'outside' | 'lobby' | 'lift' | 'lift-inside' | 'store';
@@ -48,8 +48,12 @@ export class App {
     new JewelryGuy(),
   ];
 
+  protected readonly storeCharacters: Character[] = [
+    new ShopAssistant(),
+  ];
+
   private get allCharacters(): Character[] {
-    return [...this.outsideCharacters, ...this.lobbyCharacters];
+    return [...this.outsideCharacters, ...this.lobbyCharacters, ...this.storeCharacters];
   }
   protected readonly stage = signal<SceneStage>('start');
   protected readonly currentSceneId = signal<SceneId>('outside');
@@ -87,7 +91,40 @@ export class App {
   protected readonly videoSkipping = signal(false);
   protected readonly videoTransitioning = signal(false);
   protected readonly videoFadingOut = signal(false);
-  protected readonly liftFloorInput = signal('');
+  protected readonly showFloorPanel = signal(false);
+
+  protected readonly floors: { number: number; logo: string; shop: string }[] = [
+    { number: 1,  logo: '💎', shop: 'Crown Jewellers' },
+    { number: 2,  logo: '👗', shop: 'Maison Couture' },
+    { number: 3,  logo: '⌚', shop: 'Horologium' },
+    { number: 4,  logo: '👞', shop: 'Cobbler &amp; Co.' },
+    { number: 5,  logo: '📚', shop: 'Page &amp; Quill' },
+    { number: 6,  logo: '🍵', shop: 'The Tea Emporium' },
+    { number: 7,  logo: '🧴', shop: 'Apothecary &amp; Bloom' },
+    { number: 8,  logo: '🎩', shop: 'Hatters &amp; Haberdashers' },
+    { number: 9,  logo: '🖼️', shop: 'Gilded Frame Gallery' },
+    { number: 10, logo: '🍫', shop: 'Chocolatier Royale' },
+    { number: 11, logo: '🧵', shop: 'Silk &amp; Thread' },
+    { number: 12, logo: '🎻', shop: 'Crescendo Music Hall' },
+    { number: 13, logo: '🕯️', shop: 'Chandler &amp; Wick' },
+    { number: 14, logo: '🧳', shop: 'Globe Trotter Luggage' },
+    { number: 15, logo: '🌿', shop: 'Botanica Verde' },
+    { number: 16, logo: '🍷', shop: 'Vintner&apos;s Vault' },
+    { number: 17, logo: '🖋️', shop: 'Stationer&apos;s Guild' },
+    { number: 18, logo: '🧸', shop: 'Toy Emporium' },
+    { number: 19, logo: '📷', shop: 'Lens &amp; Light' },
+    { number: 20, logo: '🪞', shop: 'Looking Glass &amp; Co.' },
+    { number: 21, logo: '🎀', shop: 'Ribbons &amp; Bows' },
+    { number: 22, logo: '🧶', shop: 'The Knitting Nook' },
+    { number: 23, logo: '🕰️', shop: 'Grandfather&apos;s Clocks' },
+    { number: 24, logo: '🎭', shop: 'Masquerade Costumiers' },
+    { number: 25, logo: '🪴', shop: 'Conservatory Plants' },
+    { number: 26, logo: '📿', shop: 'Bead &amp; Bauble' },
+    { number: 27, logo: '🧁', shop: 'Patisserie Belle' },
+    { number: 28, logo: '🎨', shop: 'Atelier d&apos;Art' },
+    { number: 29, logo: '🪶', shop: 'Quill &amp; Parchment' },
+    { number: 30, logo: '🌟', shop: 'Penthouse Observatory' },
+  ];
 
   // --- Computed signals for ThreeSceneComponent ---
 
@@ -101,7 +138,7 @@ export class App {
   );
 
   protected readonly sceneShowCharacters = computed(() =>
-    (this.stage() === 'start' || (this.stage() === 'end' && this.currentSceneId() === 'lobby')) && !this.showVideo(),
+    (this.stage() === 'start' || (this.stage() === 'end' && (this.currentSceneId() === 'lobby' || this.currentSceneId() === 'store'))) && !this.showVideo(),
   );
 
   protected readonly sceneCharacters = computed(() => {
@@ -115,6 +152,7 @@ export class App {
       } : c.config);
     if (this.stage() === 'start') return applyEdits(this.outsideCharacters);
     if (this.currentSceneId() === 'lobby') return applyEdits(this.lobbyCharacters);
+    if (this.currentSceneId() === 'store') return applyEdits(this.storeCharacters);
     return [];
   });
 
@@ -217,7 +255,7 @@ export class App {
     const scene = this.currentSceneId();
     if (scene === 'lobby') this.onLiftClick();
     else if (scene === 'lift') this.onEnterLiftClick();
-    else if (scene === 'lift-inside') this.onLiftFloorGo();
+    else if (scene === 'lift-inside') this.toggleFloorPanel();
     else if (scene === 'store') this.jumpToScene('lobby');
   }
 
@@ -270,9 +308,17 @@ export class App {
     return this.stage() === 'end' && this.currentSceneId() === 'store';
   }
 
-  protected onLiftFloorGo(): void {
-    const floor = this.liftFloorInput();
-    if (!floor) return;
+  protected toggleFloorPanel(): void {
+    if (this.stage() !== 'end' || this.currentSceneId() !== 'lift-inside' || this.showVideo()) return;
+    this.showFloorPanel.update(v => !v);
+  }
+
+  protected closeFloorPanel(): void {
+    this.showFloorPanel.set(false);
+  }
+
+  protected onFloorSelect(floor: number): void {
+    this.showFloorPanel.set(false);
     if (this.stage() !== 'end' || this.currentSceneId() !== 'lift-inside' || this.showVideo()) return;
     this.transitionVideoPathState.set('video/exit-lift.mp4');
     this.transitionTargetSceneId.set('store');

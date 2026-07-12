@@ -232,6 +232,90 @@
 	background: rgba(255, 200, 60, 0.12);
 }
 
+/* --- Floor panel --- */
+.floor-panel-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(4px);
+	animation: fade-in 200ms ease-out;
+}
+
+.floor-panel {
+	background: rgba(20, 20, 20, 0.92);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 16px;
+	padding: 1.5rem;
+	max-width: 640px;
+	width: 90%;
+	max-height: 80vh;
+	overflow-y: auto;
+	box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.floor-panel-title {
+	color: #ffd84d;
+	font: 600 1.2rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif;
+	margin: 0 0 1rem;
+	text-align: center;
+}
+
+.floor-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 0.5rem;
+}
+
+.floor-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.55rem 0.75rem;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background 140ms ease, border-color 140ms ease, transform 100ms ease;
+	text-align: left;
+}
+
+.floor-btn:hover {
+	background: rgba(255, 255, 255, 0.18);
+	border-color: rgba(255, 200, 60, 0.5);
+	transform: scale(1.03);
+}
+
+.floor-btn:active {
+	transform: scale(0.98);
+}
+
+.floor-number {
+	font: 700 0.9rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif;
+	color: #ffd84d;
+	min-width: 1.5rem;
+	text-align: center;
+}
+
+.floor-logo {
+	font-size: 1.2rem;
+	line-height: 1;
+}
+
+.floor-shop {
+	font: 500 0.78rem/1.2 system-ui, -apple-system, 'Segoe UI', sans-serif;
+	color: rgba(255, 255, 255, 0.75);
+}
+
+@keyframes fade-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
 .cinematic-box {
 	position: absolute;
 	inset: 0;
