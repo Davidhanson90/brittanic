@@ -205,6 +205,33 @@
 	padding-left: 0.2rem;
 }
 
+.lift-floor-input {
+	width: 4rem;
+	text-align: center;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	background: rgba(255, 255, 255, 0.14);
+	color: #fff;
+	font: 600 0.95rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif;
+	padding: 0.55rem 0.5rem;
+	border-radius: 999px;
+	transition: background 160ms ease, border-color 160ms ease;
+}
+
+.lift-floor-input::placeholder {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.lift-floor-input:hover {
+	background: rgba(255, 255, 255, 0.24);
+	border-color: rgba(255, 255, 255, 0.45);
+}
+
+.lift-floor-input:focus {
+	outline: none;
+	border-color: rgba(255, 200, 60, 0.7);
+	background: rgba(255, 200, 60, 0.12);
+}
+
 .cinematic-box {
 	position: absolute;
 	inset: 0;
@@ -222,4 +249,29 @@
 	border: 4px solid rgba(255, 200, 60, 0.8);
 	border-radius: 8px;
 	box-shadow: 0 0 40px rgba(255, 200, 60, 0.25), 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.video-fade-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 50;
+	background: #fff;
+	animation: fade-in-white 300ms ease-out forwards;
+	pointer-events: none;
+}
+
+.video-fade-overlay--black {
+	background: #000;
+	animation: none;
+	opacity: 0;
+	transition: opacity 1.5s ease;
+}
+
+.video-fade-overlay--black.visible {
+	opacity: 1;
+}
+
+@keyframes fade-in-white {
+	from { opacity: 0; }
+	to { opacity: 1; }
 }

@@ -8,24 +8,30 @@ class="scene-layer"
 [characters]="sceneCharacters()"
 [selectedCharacterId]="selectedCharacter()"
 (transitionVideoEnded)="onVideoEnded()"
+(transitionVideoEnding)="onVideoEnding()"
 (characterClicked)="onCharacterClicked($event)"
+(backgroundClicked)="onBackgroundClicked()"
 >
   @if (stage() === 'start') {
-  <button
-  type="button"
-  class="fullscreen-button scene-layer"
-  (click)="onStartImageClick()"
-  aria-label="Enter the lobby"
-  [disabled]="transitionStarted()"
-  [style.pointer-events]="selectedCharacter() ? 'none' : 'auto'"
-  ></button>
-
   <nav class="start-nav" aria-label="Quick navigation">
-  	<button type="button" class="lobby-nav-item" (click)="jumpToScene('lobby')">Lobby</button>
-  	<button type="button" class="lobby-nav-item" (click)="jumpToScene('lift')">Lift</button>
-  	<button type="button" class="lobby-nav-item" (click)="jumpToScene('store-entrance')">Store</button>
+  	<button type="button" class="lobby-nav-item" (click)="onStartImageClick()">Lobby</button>
   </nav>
   }
+
+  @if (stage() === 'transition-video') {
+  <button
+    type="button"
+    class="fullscreen-button scene-layer"
+    (click)="skipVideo()"
+    aria-label="Skip video"
+    [style.pointer-events]="videoSkipping() ? 'none' : 'auto'"
+  ></button>
+  @if (videoSkipping()) {
+  <div class="video-fade-overlay"></div>
+  }
+  }
+
+  <div class="video-fade-overlay video-fade-overlay--black" [class.visible]="videoFadingOut() || videoTransitioning()"></div>
 
   @if (isLobbyScene) {
   <nav class="lobby-nav" aria-label="Lobby navigation">
@@ -36,6 +42,25 @@ class="scene-layer"
   @if (isLiftScene) {
   <nav class="lobby-nav" aria-label="Lift navigation">
   <button type="button" class="lobby-nav-item" (click)="onEnterLiftClick()">Enter Lift</button>
+  </nav>
+  }
+
+  @if (isLiftInsideScene) {
+  <nav class="lobby-nav" aria-label="Lift floor navigation">
+  <input
+    type="number"
+    class="lift-floor-input"
+    placeholder="Floor"
+    [value]="liftFloorInput()"
+    (input)="liftFloorInput.set($any($event.target).value)"
+  />
+  <button type="button" class="lobby-nav-item" (click)="onLiftFloorGo()">Go</button>
+  </nav>
+  }
+
+  @if (isStoreScene) {
+  <nav class="lobby-nav" aria-label="Store navigation">
+  <button type="button" class="lobby-nav-item" (click)="jumpToScene('lobby')">Lobby</button>
   </nav>
   }
 

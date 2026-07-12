@@ -143,7 +143,9 @@ export class ThreeSceneComponent implements AfterViewInit {
 
   // --- Outputs ---
   readonly transitionVideoEnded = output<void>();
+  readonly transitionVideoEnding = output<void>();
   readonly characterClicked = output<string>();
+  readonly backgroundClicked = output<void>();
 
   private readonly canvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly destroyRef = inject(DestroyRef);
@@ -322,6 +324,13 @@ export class ThreeSceneComponent implements AfterViewInit {
     vid.autoplay = true;
     vid.loop = false;
     vid.addEventListener('ended', () => this.transitionVideoEnded.emit(), { once: true });
+    let endingEmitted = false;
+    vid.addEventListener('timeupdate', () => {
+      if (!endingEmitted && vid.duration > 0 && vid.duration - vid.currentTime <= 1.5) {
+        endingEmitted = true;
+        this.transitionVideoEnding.emit();
+      }
+    });
     vid.play().catch(() => {});
 
     const tex = new THREE.VideoTexture(vid);
@@ -334,9 +343,11 @@ export class ThreeSceneComponent implements AfterViewInit {
     );
     mesh.position.z = -4; // In front of background (-5), behind characters (-3 to -1)
     mesh.scale.set(this.aspect * 2, 2, 1); // Initial size; refined once metadata loads
+    mesh.visible = false; // Hide until video has its first frame ready
     this.scene.add(mesh);
 
     vid.addEventListener('loadedmetadata', () => this.fitCover(mesh, tex), { once: true });
+    vid.addEventListener('canplay', () => { mesh.visible = true; }, { once: true });
 
     this.tvVideo = vid;
     this.tvTexture = tex;
@@ -545,10 +556,15 @@ export class ThreeSceneComponent implements AfterViewInit {
       }
     } else {
       // Clicked on background - reset camera
+      const wasZoomed = this.cameraZoom !== 1 || this.cameraTargetX !== 0 || this.cameraTargetY !== 0;
       this.hoveredEntry = null;
       this.cameraTargetX = 0;
       this.cameraTargetY = 0;
       this.cameraZoom = 1;
+      // Only trigger navigation if camera was not zoomed in and no character selected
+      if (!wasZoomed && !this.selectedCharacterId()) {
+        this.backgroundClicked.emit();
+      }
     }
 
     // Handle dragging for selected character

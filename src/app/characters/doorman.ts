@@ -4,7 +4,7 @@ import type { ThreeCharacterConfig } from '../three-scene.component';
 export class Doorman extends Character {
   override readonly id = 'doorman-outside';
   override readonly label = 'Doorman';
-  override readonly cinematicVideoSrc = null;
+  override readonly cinematicVideoSrc = 'video/doorman/over-qualified.mp4';
 
   override readonly config: ThreeCharacterConfig = {
     id: this.id,

@@ -3,7 +3,7 @@ import { ThreeSceneComponent } from './three-scene.component';
 import { Character, Doorman, JewelryGuy, LadyInRed, OldLadies, SecurityGuard } from './characters';
 
 type SceneStage = 'start' | 'transition-video' | 'end';
-type SceneId = 'outside' | 'lobby' | 'lift' | 'store-entrance';
+type SceneId = 'outside' | 'lobby' | 'lift' | 'lift-inside' | 'store';
 
 interface LocationScene {
   id: string;
@@ -84,6 +84,10 @@ export class App {
   protected readonly currentStillImageAlt = signal(this.activeScene.altEnd);
   protected readonly transitionStarted = signal(false);
   protected readonly showVideo = signal(false);
+  protected readonly videoSkipping = signal(false);
+  protected readonly videoTransitioning = signal(false);
+  protected readonly videoFadingOut = signal(false);
+  protected readonly liftFloorInput = signal('');
 
   // --- Computed signals for ThreeSceneComponent ---
 
@@ -168,7 +172,8 @@ export class App {
       outside: { image: this.activeScene.startImage, alt: this.activeScene.altStart },
       lobby:   { image: 'images/brittanic-lobby.jpg', alt: 'Brittanic lobby' },
       lift:    { image: 'images/lift.jpg', alt: 'Lift' },
-      'store-entrance': { image: 'images/store-entrance.jpg', alt: 'Store entrance' },
+      'lift-inside': { image: 'images/lift-inside.jpg', alt: 'Lift inside' },
+      store: { image: 'images/store-1.jpg', alt: 'Store' },
     };
     const dest = imageMap[sceneId];
     this.transitionStarted.set(true);
@@ -179,13 +184,54 @@ export class App {
     this.stage.set('end');
   }
 
-  protected onVideoEnded(): void {
+  protected onVideoEnding(): void {
     if (this.stage() !== 'transition-video') return;
-    this.currentStillImagePath.set(this.transitionTargetImagePath());
-    this.currentStillImageAlt.set(this.transitionTargetImageAlt());
-    this.showVideo.set(false);
-    this.currentSceneId.set(this.transitionTargetSceneId());
-    this.stage.set('end');
+    this.videoFadingOut.set(true);
+  }
+
+  protected onVideoEnded(): void {
+    if (this.stage() !== 'transition-video' || this.videoTransitioning()) return;
+    this.videoTransitioning.set(true);
+    // Fade to black, then switch scene, then fade up
+    setTimeout(() => {
+      this.currentStillImagePath.set(this.transitionTargetImagePath());
+      this.currentStillImageAlt.set(this.transitionTargetImageAlt());
+      this.showVideo.set(false);
+      this.currentSceneId.set(this.transitionTargetSceneId());
+      this.stage.set('end');
+      this.videoFadingOut.set(false);
+      // Trigger fade-up by removing overlay after a frame
+      requestAnimationFrame(() => {
+        this.videoTransitioning.set(false);
+      });
+    }, 100);
+  }
+
+  protected onBackgroundClicked(): void {
+    if (this.showVideo()) return;
+    if (this.stage() === 'start') {
+      this.onStartImageClick();
+      return;
+    }
+    if (this.stage() !== 'end') return;
+    const scene = this.currentSceneId();
+    if (scene === 'lobby') this.onLiftClick();
+    else if (scene === 'lift') this.onEnterLiftClick();
+    else if (scene === 'lift-inside') this.onLiftFloorGo();
+    else if (scene === 'store') this.jumpToScene('lobby');
+  }
+
+  protected skipVideo(): void {
+    if (this.stage() !== 'transition-video' || this.videoSkipping()) return;
+    this.videoSkipping.set(true);
+    setTimeout(() => {
+      this.currentStillImagePath.set(this.transitionTargetImagePath());
+      this.currentStillImageAlt.set(this.transitionTargetImageAlt());
+      this.showVideo.set(false);
+      this.currentSceneId.set(this.transitionTargetSceneId());
+      this.stage.set('end');
+      this.videoSkipping.set(false);
+    }, 300);
   }
 
   protected onLiftClick(): void {
@@ -200,10 +246,10 @@ export class App {
 
   protected onEnterLiftClick(): void {
     if (this.stage() !== 'end' || this.currentSceneId() !== 'lift' || this.showVideo()) return;
-    this.transitionVideoPathState.set('video/lift-to-floor.mp4');
-    this.transitionTargetSceneId.set('store-entrance');
-    this.transitionTargetImagePath.set('images/store-entrance.jpg');
-    this.transitionTargetImageAlt.set('Store entrance');
+    this.transitionVideoPathState.set('video/enter-the-lift.mp4');
+    this.transitionTargetSceneId.set('lift-inside');
+    this.transitionTargetImagePath.set('images/lift-inside.jpg');
+    this.transitionTargetImageAlt.set('Lift inside');
     this.stage.set('transition-video');
     this.showVideo.set(true);
   }
@@ -214,5 +260,25 @@ export class App {
 
   protected get isLiftScene(): boolean {
     return this.stage() === 'end' && this.currentSceneId() === 'lift';
+  }
+
+  protected get isLiftInsideScene(): boolean {
+    return this.stage() === 'end' && this.currentSceneId() === 'lift-inside';
+  }
+
+  protected get isStoreScene(): boolean {
+    return this.stage() === 'end' && this.currentSceneId() === 'store';
+  }
+
+  protected onLiftFloorGo(): void {
+    const floor = this.liftFloorInput();
+    if (!floor) return;
+    if (this.stage() !== 'end' || this.currentSceneId() !== 'lift-inside' || this.showVideo()) return;
+    this.transitionVideoPathState.set('video/exit-lift.mp4');
+    this.transitionTargetSceneId.set('store');
+    this.transitionTargetImagePath.set('images/store-1.jpg');
+    this.transitionTargetImageAlt.set('Store');
+    this.stage.set('transition-video');
+    this.showVideo.set(true);
   }
 }
