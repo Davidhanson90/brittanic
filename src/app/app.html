@@ -164,6 +164,12 @@ class="scene-layer"
     playsInline
     (ended)="onCinematicVideoEnded()"
   ></video>
+  @if (cinematicVideoEnded()) {
+  <div class="cinematic-actions">
+    <button type="button" class="cinematic-btn cinematic-btn--speak" (click)="closeCinematicVideo()">Speak</button>
+    <button type="button" class="cinematic-btn cinematic-btn--close" (click)="closeCinematicVideo()">Close</button>
+  </div>
+  }
 </div>
 }
 

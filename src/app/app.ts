@@ -62,6 +62,7 @@ export class App {
   // --- Cinematic video overlay ---
   protected readonly cinematicVideoActive = signal(false);
   protected readonly cinematicVideoSrc = signal('');
+  protected readonly cinematicVideoEnded = signal(false);
 
   // --- Per-character edit state (reset when selection changes) ---
   protected readonly editBrightness = signal(1.0);
@@ -176,12 +177,18 @@ export class App {
     const character = this.allCharacters.find(c => c.id === id);
     if (!character?.cinematicVideoSrc) return;
     character.clicked.next(id);
+    this.cinematicVideoEnded.set(false);
     this.cinematicVideoSrc.set(character.cinematicVideoSrc);
     this.cinematicVideoActive.set(true);
   }
 
   protected onCinematicVideoEnded(): void {
+    this.cinematicVideoEnded.set(true);
+  }
+
+  protected closeCinematicVideo(): void {
     this.cinematicVideoActive.set(false);
+    this.cinematicVideoEnded.set(false);
     const src = this.cinematicVideoSrc();
     this.cinematicVideoSrc.set('');
     const character = this.allCharacters.find(c => c.cinematicVideoSrc === src);
